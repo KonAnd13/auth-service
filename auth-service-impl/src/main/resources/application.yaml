@@ -1,0 +1,23 @@
+server:
+  port: 8282
+  servlet:
+    context-path: /auth-service
+
+spring:
+  application:
+    name: auth-service-impl
+  datasource:
+    url: jdbc:postgresql://localhost:5434/auth
+    username: postgres
+    password: postgres
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+scheduler:
+  token:
+    expiration:
+      delay: 5
