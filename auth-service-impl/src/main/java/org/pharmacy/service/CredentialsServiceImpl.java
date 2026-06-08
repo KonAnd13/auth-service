@@ -1,7 +1,9 @@
 package org.pharmacy.service;
 
 import lombok.RequiredArgsConstructor;
+import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.entity.Credentials;
+import org.pharmacy.mapper.TokenInfoMapper;
 import org.pharmacy.repository.CredentialsRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +18,19 @@ import java.util.UUID;
 public class CredentialsServiceImpl implements CredentialsService {
 
     private final CredentialsRepository credentialsRepository;
+    private final TokenInfoMapper tokenInfoMapper;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final Base64.Encoder ENCODER = Base64.getUrlEncoder().withoutPadding();
     private static final int TOKEN_VALIDITY_DAYS = 7;
 
     @Override
     @Transactional
-    public String getToken(UUID pharmacyId) {
-        return credentialsRepository.findByPharmacyId(pharmacyId)
+    public TokenInfoDto getToken(UUID pharmacyId) {
+        Credentials credentials = credentialsRepository.findByPharmacyId(pharmacyId)
                 .map(this::refreshIfInactive)
-                .orElseGet(() -> createCredentials(pharmacyId))
-                .getToken();
+                .orElseGet(() -> createCredentials(pharmacyId));
+
+        return tokenInfoMapper.toTokenInfoDto(credentials);
     }
 
     private Credentials refreshIfInactive(Credentials credentials) {
