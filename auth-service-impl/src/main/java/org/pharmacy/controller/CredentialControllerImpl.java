@@ -1,6 +1,7 @@
 package org.pharmacy.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.service.CredentialsService;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +14,7 @@ public class CredentialControllerImpl implements CredentialsController {
     private final CredentialsService credentialsService;
 
     @Override
-    public String getToken(UUID pharmacyId) {
+    public TokenInfoDto getToken(UUID pharmacyId) {
         return credentialsService.getToken(pharmacyId);
     }
 

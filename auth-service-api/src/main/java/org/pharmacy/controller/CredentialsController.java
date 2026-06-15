@@ -1,18 +1,17 @@
 package org.pharmacy.controller;
 
+import org.pharmacy.dto.TokenInfoDto;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
-@RequestMapping("api/v1/credentials")
 public interface CredentialsController {
 
-    @PostMapping("/{pharmacyId}/get-token")
-    String getToken(@PathVariable UUID pharmacyId);
+    @GetMapping("/api/v1/credentials/{pharmacyId}/get-token")
+    TokenInfoDto getToken(@PathVariable UUID pharmacyId);
 
-    @DeleteMapping("/{pharmacyId}/revoke-token")
+    @DeleteMapping("/api/v1/credentials/{pharmacyId}/revoke-token")
     void revokeToken(@PathVariable UUID pharmacyId);
 }
