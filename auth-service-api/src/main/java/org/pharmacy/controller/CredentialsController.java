@@ -14,4 +14,7 @@ public interface CredentialsController {
 
     @DeleteMapping("/api/v1/credentials/{pharmacyId}/revoke-token")
     void revokeToken(@PathVariable UUID pharmacyId);
+
+    @GetMapping("/api/v1/credentials/user/{inn}/get-token")
+    TokenInfoDto getUserToken(@PathVariable String inn);
 }

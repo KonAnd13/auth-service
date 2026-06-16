@@ -1,10 +1,12 @@
-package org.pharmacy.service;
+package org.pharmacy.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.pharmacy.dto.TokenInfoDto;
 import org.pharmacy.entity.Credentials;
 import org.pharmacy.mapper.TokenInfoMapper;
 import org.pharmacy.repository.CredentialsRepository;
+import org.pharmacy.service.CredentialsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Base64;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CredentialsServiceImpl implements CredentialsService {
@@ -26,10 +29,12 @@ public class CredentialsServiceImpl implements CredentialsService {
     @Override
     @Transactional
     public TokenInfoDto getToken(UUID pharmacyId) {
+        log.info("Getting token for pharmacy id: {}", pharmacyId);
         Credentials credentials = credentialsRepository.findByPharmacyId(pharmacyId)
                 .map(this::refreshIfInactive)
                 .orElseGet(() -> createCredentials(pharmacyId));
 
+        log.debug("Token issued for pharmacy id: {}", pharmacyId);
         return tokenInfoMapper.toTokenInfoDto(credentials);
     }
 
@@ -37,6 +42,7 @@ public class CredentialsServiceImpl implements CredentialsService {
         if (!credentials.getActive()) {
             fillTokenData(credentials);
             credentialsRepository.save(credentials);
+            log.debug("Token updated for pharmacy id: {}", credentials.getPharmacyId());
         }
 
         return credentials;
@@ -46,7 +52,9 @@ public class CredentialsServiceImpl implements CredentialsService {
         Credentials credentials = new Credentials();
         credentials.setPharmacyId(pharmacyId);
         fillTokenData(credentials);
-        return credentialsRepository.save(credentials);
+        credentials = credentialsRepository.save(credentials);
+        log.debug("Token created for pharmacy id: {}", credentials.getPharmacyId());
+        return credentials;
     }
 
     private void fillTokenData(Credentials credentials) {
@@ -65,6 +73,7 @@ public class CredentialsServiceImpl implements CredentialsService {
     @Override
     @Transactional
     public void revokeToken(UUID pharmacyId) {
+        log.info("Revoking token for pharmacy id: {}", pharmacyId);
         Credentials credentials = credentialsRepository.findByPharmacyId(pharmacyId)
                 .orElseThrow(() -> new RuntimeException("Не найден токен для аптеки с id = " + pharmacyId));
 
@@ -72,8 +81,22 @@ public class CredentialsServiceImpl implements CredentialsService {
             credentials.setActive(false);
             credentials.setUpdatedDate(LocalDate.now());
             credentialsRepository.save(credentials);
-            System.out.println("Отозван токен для аптеки с id = " + pharmacyId);
+            log.debug("Token revoked for pharmacy id: {}", pharmacyId);
+        } else {
+            log.warn("Token already inactive for pharmacy id: {}", pharmacyId);
         }
+    }
+
+    @Override
+    public TokenInfoDto getUserToken(String inn) {
+        log.info("Getting user token for inn: {}", inn);
+        TokenInfoDto tokenInfoDto = TokenInfoDto.builder()
+                .token(generateToken())
+                .expiredDate(LocalDate.now().plusDays(TOKEN_VALIDITY_DAYS))
+                .build();
+
+        log.debug("User token issued for inn: {}", inn);
+        return tokenInfoDto;
     }
 
 }
