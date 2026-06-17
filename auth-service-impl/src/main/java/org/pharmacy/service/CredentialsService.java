@@ -9,4 +9,6 @@ public interface CredentialsService {
     TokenInfoDto getToken(UUID pharmacyId);
 
     void revokeToken(UUID pharmacyID);
+
+    TokenInfoDto getUserToken(String inn);
 }

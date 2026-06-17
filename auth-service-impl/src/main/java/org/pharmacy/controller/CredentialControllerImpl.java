@@ -22,4 +22,9 @@ public class CredentialControllerImpl implements CredentialsController {
     public void revokeToken(UUID pharmacyId) {
         credentialsService.revokeToken(pharmacyId);
     }
+
+    @Override
+    public TokenInfoDto getUserToken(String inn) {
+        return credentialsService.getUserToken(inn);
+    }
 }
