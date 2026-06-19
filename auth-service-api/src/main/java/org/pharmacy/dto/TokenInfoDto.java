@@ -1,13 +1,17 @@
 package org.pharmacy.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Value
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TokenInfoDto {
-    String token;
-    LocalDate expiredDate;
+    private String token;
+    private LocalDate expiredDate;
 }
