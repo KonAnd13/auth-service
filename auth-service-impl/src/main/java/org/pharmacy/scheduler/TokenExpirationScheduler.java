@@ -2,6 +2,7 @@ package org.pharmacy.scheduler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.pharmacy.repository.CredentialsRepository;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,8 +20,9 @@ public class TokenExpirationScheduler {
 
     private final CredentialsRepository credentialsRepository;
 
-    @Scheduled(fixedDelayString = "${scheduler.token.expiration.delay}", timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelayString = "${scheduler.token.expiration.delay}", timeUnit = TimeUnit.SECONDS)
     @Transactional
+    @SchedulerLock(name = "TokenExpirationScheduler.revokeExpiredTokens")
     public void revokeExpiredTokens() {
         log.info("Running token expiration check");
         int revokedTokens = credentialsRepository.revokeExpiredTokens(LocalDate.now());
