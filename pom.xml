@@ -27,6 +27,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <shedlock-spring.version>7.7.0</shedlock-spring.version>
+        <shedlock-jdbc.version>7.7.0</shedlock-jdbc.version>
     </properties>
 
     <dependencyManagement>
@@ -45,6 +47,16 @@
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
                 <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-spring</artifactId>
+                <version>${shedlock-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.javacrumbs.shedlock</groupId>
+                <artifactId>shedlock-provider-jdbc-template</artifactId>
+                <version>${shedlock-jdbc.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
